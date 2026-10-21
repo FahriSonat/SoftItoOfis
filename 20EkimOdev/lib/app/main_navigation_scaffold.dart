@@ -16,57 +16,67 @@ class MainNavigationScaffold extends ConsumerWidget {
     final currentIndex = ref.watch(bottomNavIndexProvider);
 
     final screens = const [
-      PaymentScreen(), // Index 0: Ödeme (kart bilgileri, ödeme & kiralama yükümlülükleri)
-      RentalScreen(), // Index 1: Araç Kiralama (Orta butonun solu!)
-      HomeScreen(), // Index 2: Ana Ekran (TAM ORTA BUTON!)
-      ProfileScreen(), // Index 3: Hesabım (Orta butonun sağı!)
-      GpsScreen(), // Index 4: Canlı GPS Harita (Son ekran!)
+      HomeScreen(), // Index 0: Ana Ekran (Varsayılan ve en başta!)
+      RentalScreen(), // Index 1: Araç Kiralama & Filtreler
+      GpsScreen(), // Index 2: Canlı GPS Harita
+      PaymentScreen(), // Index 3: Ödeme ve Rezervasyon
+      ProfileScreen(), // Index 4: Hesabım ve Ayarlar
     ];
 
-    return Scaffold(
-      body: IndexedStack(index: currentIndex, children: screens),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) {
-          ref.read(bottomNavIndexProvider.notifier).setIndex(index);
-        },
-        destinations: const [
-          // 0: Ödeme Ekranı (Sol Baştaki Buton)
-          NavigationDestination(
-            icon: Icon(Icons.payment_outlined),
-            selectedIcon: Icon(Icons.payment),
-            label: 'Ödeme',
-            tooltip: 'Ödeme ve Rezervasyon',
-          ),
-          // 1: Araç Kiralama Ekranı (Orta Butonun Solu)
-          NavigationDestination(
-            icon: Icon(Icons.directions_car_outlined),
-            selectedIcon: Icon(Icons.directions_car),
-            label: 'Kiralama',
-            tooltip: 'Araç Kiralama ve Filtreler',
-          ),
-          // 2: Ana Ekran (TAM ORTA BUTON)
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Ana Ekran',
-            tooltip: 'Ana Sayfa',
-          ),
-          // 3: Hesabım Ekranı (Orta Butonun Sağı)
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Hesabım',
-            tooltip: 'Hesabım ve Ayarlar',
-          ),
-          // 4: Canlı GPS Haritası (Son Ekran)
-          NavigationDestination(
-            icon: Icon(Icons.location_on_outlined),
-            selectedIcon: Icon(Icons.location_on),
-            label: 'Harita (GPS)',
-            tooltip: 'Canlı Araç Takip Haritası',
-          ),
-        ],
+    return PopScope(
+      canPop: currentIndex == NavIndex.home,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        // Eğer başka bir sekmedeyse fiziksel/sanal geri tuşuna basınca Ana Ekrana dönsün
+        if (currentIndex != NavIndex.home) {
+          ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.home);
+        }
+      },
+      child: Scaffold(
+        body: IndexedStack(index: currentIndex, children: screens),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (index) {
+            ref.read(bottomNavIndexProvider.notifier).setIndex(index);
+          },
+          destinations: const [
+            // 0: Ana Ekran (Sol Baştaki Buton)
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Ana Ekran',
+              tooltip: 'Ana Sayfa',
+            ),
+            // 1: Araç Kiralama Ekranı
+            NavigationDestination(
+              icon: Icon(Icons.directions_car_outlined),
+              selectedIcon: Icon(Icons.directions_car),
+              label: 'Kiralama',
+              tooltip: 'Araç Kiralama ve Filtreler',
+            ),
+            // 2: Canlı GPS Haritası
+            NavigationDestination(
+              icon: Icon(Icons.location_on_outlined),
+              selectedIcon: Icon(Icons.location_on),
+              label: 'Harita (GPS)',
+              tooltip: 'Canlı Araç Takip Haritası',
+            ),
+            // 3: Ödeme Ekranı
+            NavigationDestination(
+              icon: Icon(Icons.payment_outlined),
+              selectedIcon: Icon(Icons.payment),
+              label: 'Ödeme',
+              tooltip: 'Ödeme ve Rezervasyon',
+            ),
+            // 4: Hesabım Ekranı
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person),
+              label: 'Hesabım',
+              tooltip: 'Hesabım ve Ayarlar',
+            ),
+          ],
+        ),
       ),
     );
   }

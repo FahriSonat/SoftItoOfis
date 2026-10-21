@@ -379,6 +379,13 @@ class _RentalScreenState extends ConsumerState<RentalScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Ana Sayfaya Dön',
+          onPressed: () {
+            ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.home);
+          },
+        ),
         title: const Text('Araç Kiralama'),
         actions: [
           if (activeCount > 0)
@@ -709,7 +716,9 @@ class _RentalScreenState extends ConsumerState<RentalScreen> {
                           ref
                               .read(selectedVehicleForPaymentProvider.notifier)
                               .selectVehicle(vehicle);
-                          ref.read(bottomNavIndexProvider.notifier).setIndex(0);
+                          ref
+                              .read(bottomNavIndexProvider.notifier)
+                              .setIndex(NavIndex.payment);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(

@@ -173,12 +173,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         actions: [
           IconButton.filledTonal(
             onPressed: () {
-              ref.read(bottomNavIndexProvider.notifier).setIndex(3);
+              ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.profile);
             },
-            icon: const Icon(Icons.notifications_none),
-            tooltip: 'Bildirimler',
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Ana Menü Ayarları & Profil',
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
         ],
       ),
       body: ListView(
@@ -498,8 +498,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // Araçları Listele Butonu
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Switch to Car Rental Tab (index 1)
-                    ref.read(bottomNavIndexProvider.notifier).setIndex(1);
+                    ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.rental);
                   },
                   icon: const Icon(Icons.search, size: 20),
                   label: const Text('Uygun Araçları Bul'),
@@ -712,8 +711,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  // Jump to Araç Kiralama (index 1)
-                  ref.read(bottomNavIndexProvider.notifier).setIndex(1);
+                  ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.rental);
                 },
                 child: const Text('Tümünü Gör'),
               ),
@@ -729,8 +727,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ref
                     .read(selectedVehicleForPaymentProvider.notifier)
                     .selectVehicle(vehicle);
-                // Jump to Payment screen (index 0)
-                ref.read(bottomNavIndexProvider.notifier).setIndex(0);
+                ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.payment);
               },
             );
           }),

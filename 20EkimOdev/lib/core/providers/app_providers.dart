@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/fake_data.dart';
 import '../models/vehicle.dart';
+import '../storage/theme_preference_store.dart';
+
+final themePreferenceStoreProvider = Provider<ThemePreferenceStore>(
+  (ref) => ThemePreferenceStore(),
+);
 
 // Theme Mode Notifier (Riverpod 3.x Notifier)
 class ThemeModeNotifier extends Notifier<ThemeMode> {
@@ -11,6 +16,11 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
 
   void setMode(ThemeMode mode) {
     state = mode;
+    ref.read(themePreferenceStoreProvider).save(mode);
+  }
+
+  Future<void> restore() async {
+    state = await ref.read(themePreferenceStoreProvider).read();
   }
 }
 
@@ -228,10 +238,19 @@ final filteredVehiclesProvider = Provider<List<Vehicle>>((ref) {
   }).toList();
 });
 
+// Navigation index constants for classic standard ordering
+class NavIndex {
+  static const int home = 0; // Ana Ekran (En başta)
+  static const int rental = 1; // Araç Kiralama & Filtreleme
+  static const int gps = 2; // Canlı GPS Araç Takip Haritası
+  static const int payment = 3; // Ödeme & Rezervasyon
+  static const int profile = 4; // Hesabım & Ayarlar (En sonda)
+}
+
 // Navigation Bottom Bar current tab index Notifier
 class BottomNavIndexNotifier extends Notifier<int> {
   @override
-  int build() => 2; // Default to index 2 (Ana Ekran / Home)
+  int build() => NavIndex.home; // Default to index 0 (Ana Ekran)
 
   void setIndex(int index) {
     state = index;

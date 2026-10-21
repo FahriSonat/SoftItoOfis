@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/presentation/auth_controller.dart';
+
 import '../../../core/providers/app_providers.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -38,16 +40,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hesabım'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Ana Sayfaya Dön',
+          onPressed: () {
+            ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.home);
+          },
+        ),
+        title: const Text('Hesabım ve Ayarlar'),
         actions: [
           IconButton(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profil bilgileri güncel')),
-              );
+              _tabController.animateTo(3); // 3: Hesap Ayarları & Tema sekmesi
             },
-            icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Ayarlar',
+            icon: const Icon(Icons.tune),
+            tooltip: 'Ayarlar Sekmesine Git',
           ),
         ],
       ),
@@ -410,8 +417,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               // BUTON: CANLI GPS EKRANINA GİT
               ElevatedButton.icon(
                 onPressed: () {
-                  // Jump to GPS screen (index 4)
-                  ref.read(bottomNavIndexProvider.notifier).setIndex(4);
+                  ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.gps);
                 },
                 icon: const Icon(Icons.radar, size: 18),
                 label: const Text('Aracımı Haritada Canlı Takip Et 📍'),
@@ -753,9 +759,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   style: TextStyle(color: AppColors.error),
                 ),
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Çıkış yapıldı')),
-                  );
+                  ref.read(authControllerProvider.notifier).signOut();
                 },
               ),
             ],

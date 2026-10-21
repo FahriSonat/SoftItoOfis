@@ -86,6 +86,13 @@ class _GpsScreenState extends ConsumerState<GpsScreen>
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Ana Sayfaya Dön',
+          onPressed: () {
+            ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.home);
+          },
+        ),
         title: const Text('Canlı GPS Araç Takibi'),
         actions: [
           IconButton(

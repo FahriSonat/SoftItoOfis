@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../booking/domain/booking_price.dart';
 
 class PaymentScreen extends ConsumerStatefulWidget {
   const PaymentScreen({super.key});
@@ -121,16 +122,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 text: 'Aracımı GPS ile Takip Et 📍',
                 onPressed: () {
                   Navigator.pop(context);
-                  // Navigate to Live GPS screen (index 4)
-                  ref.read(bottomNavIndexProvider.notifier).setIndex(4);
+                  ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.gps);
                 },
               ),
               const SizedBox(height: AppSpacing.xs),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  // Navigate to Home screen (index 2)
-                  ref.read(bottomNavIndexProvider.notifier).setIndex(2);
+                  ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.home);
                 },
                 child: const Text('Ana Sayfaya Dön'),
               ),
@@ -147,14 +146,27 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final vehicle = ref.watch(selectedVehicleForPaymentProvider);
 
-    final subtotal = vehicle.dailyPrice * _rentalDays;
-    const insuranceFee = 450;
-    const serviceFee = 150;
-    const discount = -300;
-    final total = subtotal + insuranceFee + serviceFee + discount;
+    const priceCalculator = BookingPriceCalculator();
+    final price = priceCalculator.calculate(
+      dailyRate: vehicle.dailyPrice,
+      dayCount: _rentalDays,
+    );
+    final subtotal = price.subtotal;
+    final insuranceFee = price.insuranceFee;
+    final serviceFee = price.serviceFee;
+    final total = price.total;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Ödeme ve Rezervasyon')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Ana Sayfaya Dön',
+          onPressed: () {
+            ref.read(bottomNavIndexProvider.notifier).setIndex(NavIndex.home);
+          },
+        ),
+        title: const Text('Ödeme ve Rezervasyon'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Form(
