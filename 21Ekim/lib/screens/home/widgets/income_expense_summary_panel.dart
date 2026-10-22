@@ -4,14 +4,17 @@ import '../../../core/utils/currency_formatter.dart';
 import '../../../data/models/transaction.dart';
 import '../../../core/widgets/app_card.dart';
 
+/// Gelir ve giderleri yan yana iki ayrı renkli panel olarak gösteren özet bileşeni.
+/// Sol panel yeşil tonlarında toplam geliri, sağ panel kırmızı tonlarında toplam gideri gösterir.
+/// Tıklandığında doğrudan ilgili filtreye yönlendirme sağlar.
 class IncomeExpenseSummaryPanel extends StatelessWidget {
-  final int incomeTotalMinor;
-  final int expenseTotalMinor;
-  final List<Transaction> recentIncomes;
-  final List<Transaction> recentExpenses;
-  final bool isHidden;
-  final VoidCallback onIncomeTap;
-  final VoidCallback onExpenseTap;
+  final int incomeTotalMinor;            // Toplam gelir tutarı (kuruş)
+  final int expenseTotalMinor;           // Toplam gider tutarı (kuruş)
+  final List<Transaction> recentIncomes; // Son gelir kayıtları
+  final List<Transaction> recentExpenses;// Son gider kayıtları
+  final bool isHidden;                   // Tutarlar sansürlensin mi?
+  final VoidCallback onIncomeTap;        // Gelir paneline tıklandığında çalışacak callback
+  final VoidCallback onExpenseTap;       // Gider paneline tıklandığında çalışacak callback
 
   const IncomeExpenseSummaryPanel({
     super.key,

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
+/// Uygulamanın koyu tema (Dark Theme) konfigürasyonunu tanımlayan tema sınıfı.
+/// Renkler, yazı tipi stilleri, AppBar, BottomNavigationBar, kartlar ve butonların
+/// kurumsal tasarım kılavuzuna (design.md) uygun stillerini yapılandırır.
 class AppTheme {
   AppTheme._();
 
+  /// Uygulama genelinde kullanılan karanlık tema nesnesi (ThemeData)
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,

@@ -1,19 +1,23 @@
+/// Bütçe periyodu (Günlük, Haftalık, Aylık)
 enum BudgetPeriod { day, week, month }
 
+/// Bütçeleme yöntemi
 enum BudgetMethod {
-  envelope,    // Zarf/Kategori bütçesi
-  rule503020,  // 50/30/20 kuralı
-  custom,      // Özel limitler
+  envelope,    // Zarf / Kategori bütçesi
+  rule503020,  // 50/30/20 kuralı (İhtiyaç / İstek / Tasarruf)
+  custom,      // Kullanıcının belirlediği özel limitler
 }
 
+/// Kategori veya genel harcamalar için tanımlanan bütçe modeli.
+/// Tutar minor birim (kuruş) cinsinden tam sayı olarak saklanır.
 class Budget {
   final String id;
   final BudgetPeriod period;
-  final int amountMinor;
-  final String? categoryId; // null = overall limit, non-null = category envelope
+  final int amountMinor; // Kuruş cinsinden bütçe limiti (örn. 500000 = 5.000 TL)
+  final String? categoryId; // null ise genel limit, dolu ise ilgili kategoriye özel zarf limiti
   final BudgetMethod method;
-  final DateTime startsOn;
-  final double alertThreshold; // default 0.80 (80%)
+  final DateTime startsOn; // Bütçenin geçerlilik başlangıç tarihi
+  final double alertThreshold; // Uyarı eşiği (varsayılan: 0.80 yani %80)
 
   Budget({
     required this.id,

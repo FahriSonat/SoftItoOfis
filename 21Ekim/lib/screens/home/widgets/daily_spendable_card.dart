@@ -4,15 +4,17 @@ import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/app_card.dart';
 
+/// Kalan günlük harcanabilir para tahminini ve günlük/haftalık/aylık harcama durumunu
+/// gösteren finansal özet kartı bileşeni.
 class DailySpendableCard extends StatelessWidget {
-  final int dailySpendableMinor;
-  final int todayExpenseMinor;
-  final int dailyLimitMinor;
-  final int currentWeekExpenseMinor;
-  final int weeklyLimitMinor;
-  final int currentMonthExpenseMinor;
-  final int monthlyLimitMinor;
-  final bool isHidden;
+  final int dailySpendableMinor;       // Günlük harcanabilir tahmini bütçe (kuruş)
+  final int todayExpenseMinor;          // Bugün yapılan harcama (kuruş)
+  final int dailyLimitMinor;            // Günlük bütçe limiti (kuruş)
+  final int currentWeekExpenseMinor;    // Bu haftaki toplam harcama (kuruş)
+  final int weeklyLimitMinor;           // Haftalık bütçe limiti (kuruş)
+  final int currentMonthExpenseMinor;   // Bu ayki toplam harcama (kuruş)
+  final int monthlyLimitMinor;          // Aylık bütçe limiti (kuruş)
+  final bool isHidden;                  // Gizli tutar sansürü açık mı
 
   const DailySpendableCard({
     super.key,

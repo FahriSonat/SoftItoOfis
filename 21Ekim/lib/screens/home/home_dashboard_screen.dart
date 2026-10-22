@@ -13,15 +13,22 @@ import 'widgets/upcoming_reminders_card.dart';
 import '../transactions/transaction_form_screen.dart';
 import '../transactions/transaction_detail_screen.dart';
 
+/// Ana Bütçe Özeti / Dashboard Ekranı.
+/// Kullanıcının net bakiyesini, bütçe kullanım göstergesini (Semicircular Gauge),
+/// gelir-gider dağılımını, günlük harcanabilir tutar tahminini, yaklaşan fatura/borç
+/// bildirimlerini ve son 5 işlemi tek bir bakışta sunar.
 class HomeDashboardScreen extends StatelessWidget {
+  /// Ana kabukta sekmeler arası yönlendirme callback fonksiyonu (örn: 1 nolu İşlemler sekmesine geçiş)
   final Function(int tabIndex)? onNavigateTab;
 
   const HomeDashboardScreen({super.key, this.onNavigateTab});
 
   @override
   Widget build(BuildContext context) {
+    // FinanceProvider üzerinden anlık veriler izlenir
     final provider = context.watch<FinanceProvider>();
 
+    // Veriler henüz yükleniyorsa yükleniyor indikatörü gösterilir
     if (provider.isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator(color: AppColors.indicatorBlue)),

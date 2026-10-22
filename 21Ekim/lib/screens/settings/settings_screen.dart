@@ -7,6 +7,9 @@ import '../../core/widgets/confirm_dialog.dart';
 import '../../data/models/budget.dart';
 import '../../providers/finance_provider.dart';
 
+/// Uygulama Ayarları ve Kullanıcı Tercihleri Ekranı.
+/// Günlük, haftalık ve aylık bütçe limitlerini, maaş gününü (1-31),
+/// uyarı eşiği yüzdesini, Excel sansürleme tercihini ve bildirim anahtarlarını yapılandırır.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 

@@ -2,15 +2,17 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
+/// Bütçe doluluk ve harcama oranını gösteren yarım daire gösterge (Semicircular Gauge) bileşeni.
+/// Bütçe aşımında kırmızıya döner, uyarı eşiğinde (%80) sarı ve normal seviyelerde mavi renk alır.
 class SemicircularGauge extends StatelessWidget {
-  final double progress; // 0.0 to 1.0 (capped at 1.0 for arc)
-  final double actualRatio; // actual ratio (can be > 1.0 for over-budget)
-  final String periodLabel; // "Aylık", "Haftalık", "Günlük"
-  final String centerValue; // e.g. "%64"
-  final String subCaption; // e.g. "₺12.450,00 kaldı" or "₺2.100,00 aşıldı"
-  final bool hasBudget;
-  final double strokeWidth;
-  final double size;
+  final double progress; // 0.0 ile 1.0 arası yay ilerlemesi (1.0 ile sınırlanır)
+  final double actualRatio; // Gerçek oran (aşım durumunda 1.0'dan büyük olabilir)
+  final String periodLabel; // Dönem etiketi: "Aylık", "Haftalık", "Günlük"
+  final String centerValue; // Merkezde yazan yüzde değeri (örn. "%64")
+  final String subCaption; // Alt açıklama (örn. "₺12.450,00 kaldı" veya "₺2.100,00 aşıldı")
+  final bool hasBudget; // Bütçe tanımlanmış mı?
+  final double strokeWidth; // Yayın çizgi kalınlığı
+  final double size; // Genişlik boyutu
 
   const SemicircularGauge({
     super.key,

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../../data/services/notification_service.dart';
 
+/// Uygulama içi kritik uyarıları ve bilgilendirmeleri gösteren afiş (Banner) bileşeni.
+/// Tasarım kılavuzu kurallarına tam uyumludur:
+/// - Uyarı (warning): Sarı zemin üzerinde yüksek kontrastlı siyah metin ve ikon
+/// - Kritik (critical): Kırmızı zemin üzerinde beyaz metin ve ikon
+/// - Kapatılabilir (dismiss) ve dokunulabilir (onTap) eylemleri destekler.
 class AppBanner extends StatelessWidget {
   final String title;
   final String message;

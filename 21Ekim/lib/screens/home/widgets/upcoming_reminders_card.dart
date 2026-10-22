@@ -6,10 +6,11 @@ import '../../../data/models/recurring_payment.dart';
 import '../../../data/models/debt.dart';
 import '../../../core/widgets/app_card.dart';
 
+/// Ana sayfada yaklaşan fatura ödemelerini ve borç vadelerini özetleyen kart bileşeni.
 class UpcomingRemindersCard extends StatelessWidget {
-  final List<RecurringPayment> upcomingBills;
-  final List<Debt> upcomingDebts;
-  final VoidCallback onViewAllTap;
+  final List<RecurringPayment> upcomingBills; // Yaklaşan düzenli faturalar listesi
+  final List<Debt> upcomingDebts;             // Yaklaşan borç/alacak vadeleri listesi
+  final VoidCallback onViewAllTap;            // 'Tümünü Gör' tıklandığında Borç/Fatura sekmesine yönlendirir
 
   const UpcomingRemindersCard({
     super.key,

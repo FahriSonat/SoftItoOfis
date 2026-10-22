@@ -1,19 +1,22 @@
+/// Kategori işlem türü (Gelir kategorisi, Gider kategorisi veya her ikisi)
 enum CategoryType { income, expense, both }
 
+/// 50/30/20 Bütçe kuralı sınıflandırması
 enum Rule503020Type {
-  needs,    // Zorunlu İhtiyaçlar (%50)
-  wants,    // İstekler & Yaşam (%30)
-  savings,  // Tasarruf & Borç (%20)
+  needs,    // Zorunlu İhtiyaçlar (%50 - Kira, fatura, mutfak)
+  wants,    // İstekler & Yaşam (%30 - Eğlence, kafe, alışveriş)
+  savings,  // Tasarruf & Borç (%20 - Yatırım, borç kapatma)
 }
 
+/// Gelir ve giderleri sınıflandırmak için kullanılan kategori veri modeli.
 class Category {
   final String id;
   final String name;
   final CategoryType type;
   final String colorHex;
   final String? iconName;
-  final bool isSystem;
-  final Rule503020Type? rule503020Type;
+  final bool isSystem; // Sistem tarafından sağlanan varsayılan kategori mi
+  final Rule503020Type? rule503020Type; // 50/30/20 kuralındaki ait olduğu grup
 
   Category({
     required this.id,

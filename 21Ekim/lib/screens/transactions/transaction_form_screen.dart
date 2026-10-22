@@ -10,7 +10,11 @@ import '../../data/models/category.dart';
 import '../../data/services/notification_service.dart';
 import '../../providers/finance_provider.dart';
 
+/// Yeni gelir/gider ekleme veya mevcut işlemi düzenleme formu ekranı.
+/// Zorunlu alan doğrulamaları, kategori seçimi, tarih seçici,
+/// hayır işi ve özel tutar gizlilik anahtarlarını barındırır.
 class TransactionFormScreen extends StatefulWidget {
+  /// Düzenleme modunda mevcut işlem verisi geçirilir; null ise yeni işlem ekleme modundadır.
   final Transaction? initialTransaction;
 
   const TransactionFormScreen({super.key, this.initialTransaction});
@@ -22,16 +26,17 @@ class TransactionFormScreen extends StatefulWidget {
 class _TransactionFormScreenState extends State<TransactionFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  late TransactionType _type;
-  late TextEditingController _amountController;
-  late TextEditingController _descController;
-  late TextEditingController _receiptController;
-  late DateTime _selectedDate;
-  String? _selectedCategoryId;
-  bool _isCharity = false;
-  bool _isAmountHidden = false;
-  IncomeSource? _incomeSource;
-  bool _isSaving = false;
+  // Form durum değişkenleri
+  late TransactionType _type;                 // İşlem türü (Gelir / Gider)
+  late TextEditingController _amountController; // Tutar giriş kontrolcüsü
+  late TextEditingController _descController;   // Açıklama kontrolcüsü
+  late TextEditingController _receiptController;// Fiş/Fatura notu kontrolcüsü
+  late DateTime _selectedDate;                // Seçilen işlem tarihi
+  String? _selectedCategoryId;                // Seçili kategori kimliği
+  bool _isCharity = false;                    // Hayır işi / bağış mı?
+  bool _isAmountHidden = false;               // Özel gizli tutar mı?
+  IncomeSource? _incomeSource;                // Gelir kaynağı (Maaş / Borç İadesi / Diğer)
+  bool _isSaving = false;                     // Kayıt işlemi devam ediyor mu?
 
   @override
   void initState() {

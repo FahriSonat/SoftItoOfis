@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
+/// Silme veya geri alınamaz işlemler öncesinde kullanıcıdan onay alan iletişim penceresi (Modal Dialog).
+/// [isDestructive] parametresi true ise onay butonu tehlikeli eylemi belirtmek için kırmızı (criticalBackground) renkte gösterilir.
 class ConfirmDialog extends StatelessWidget {
   final String title;
   final String message;
@@ -17,6 +19,7 @@ class ConfirmDialog extends StatelessWidget {
     this.isDestructive = false,
   });
 
+  /// Onay penceresini ekranda gösteren ve kullanıcının seçimini (true/false) döndüren statik yardımcı metot.
   static Future<bool> show(
     BuildContext context, {
     required String title,

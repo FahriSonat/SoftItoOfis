@@ -1,19 +1,26 @@
+/// İşlem türü (Gelir veya Gider)
 enum TransactionType { income, expense }
 
+/// Gelir kaynağı sınıflandırması:
+/// - salary: Aylık maaş geliri
+/// - debt_repayment: Borç tahsilatı / geri ödemesi
+/// - other: Diğer / olağan dışı gelirler
 enum IncomeSource { salary, debt_repayment, other }
 
+/// Gelir veya gider kaydını temsil eden temel finansal işlem modeli.
+/// Tutar ondalık kayıplarını engellemek için kuruş (minor unit) tam sayı olarak tutulur.
 class Transaction {
   final String id;
-  final TransactionType type;
-  final int amountMinor;
-  final String currency;
-  final String categoryId;
-  final DateTime occurredAt;
-  final String description;
-  final String? receiptNote;
-  final bool isCharity;
-  final bool isAmountHidden;
-  final IncomeSource? incomeSource;
+  final TransactionType type;     // Gelir mi Gider mi
+  final int amountMinor;          // Kuruş cinsinden tutar (örn. 150000 = 1.500,00 TL)
+  final String currency;         // Para birimi (TRY vb.)
+  final String categoryId;       // Kategori kimliği
+  final DateTime occurredAt;     // İşlemin gerçekleştiği tarih
+  final String description;      // İşlem açıklaması
+  final String? receiptNote;     // Fiş/Fatura açıklaması veya ek not
+  final bool isCharity;          // Hayır işi / Sadaka mı (Gider renginde kalır, raporda özel gösterilir)
+  final bool isAmountHidden;     // Özel gizli tutar mı (Özetlerde sansürlenir fakat toplama dahildir)
+  final IncomeSource? incomeSource; // Gelir ise kaynağı (Maaş, Borç iadesi, Diğer)
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -34,7 +41,9 @@ class Transaction {
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
+  /// Gelir işlemi kontrolü
   bool get isIncome => type == TransactionType.income;
+  /// Gider işlemi kontrolü
   bool get isExpense => type == TransactionType.expense;
 
   Transaction copyWith({

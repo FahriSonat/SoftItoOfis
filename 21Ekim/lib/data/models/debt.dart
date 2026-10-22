@@ -1,17 +1,25 @@
+/// Borç yönü:
+/// - lent: Verilen borç (alacak, kullanıcıya geri ödenecek)
+/// - borrowed: Alınan borç (yükümlülük, kullanıcının ödeyeceği)
 enum DebtDirection { lent, borrowed }
 
+/// Borcun güncel durumu:
+/// - open: Henüz hiç ödeme yapılmamış
+/// - partial: Kısmi ödeme yapılmış, kalan bakiye var
+/// - settled: Tamamen kapanmış / tahsil edilmiş
 enum DebtStatus { open, partial, settled }
 
+/// Borç ve alacak takibi veri modeli.
 class Debt {
   final String id;
-  final DebtDirection direction;
-  final String counterparty;
-  final int principalMinor;
-  final int remainingMinor;
-  final String currency;
-  final DateTime? dueDate;
-  final DebtStatus status;
-  final String? note;
+  final DebtDirection direction; // Alacak mı borç mu
+  final String counterparty;     // Karşı taraf (Kişi / Kurum adı)
+  final int principalMinor;      // Başlangıç anapara tutarı (kuruş)
+  final int remainingMinor;      // Kalan borç tutarı (kuruş)
+  final String currency;         // Para birimi (TRY, USD, EUR vb.)
+  final DateTime? dueDate;       // Vade veya geri ödeme tarihi
+  final DebtStatus status;       // Borcun durumu (açık, kısmi, kapandı)
+  final String? note;            // Açıklama veya dekont notu
 
   Debt({
     required this.id,
@@ -25,8 +33,11 @@ class Debt {
     this.note,
   });
 
+  /// Verilen borç (alacak) kontrolü
   bool get isLent => direction == DebtDirection.lent;
+  /// Alınan borç kontrolü
   bool get isBorrowed => direction == DebtDirection.borrowed;
+  /// Borcun tamamen kapatılıp kapatılmadığı kontrolü
   bool get isSettled => status == DebtStatus.settled || remainingMinor <= 0;
 
   Debt copyWith({

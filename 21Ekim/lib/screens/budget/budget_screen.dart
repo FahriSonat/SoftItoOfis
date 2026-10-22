@@ -8,6 +8,9 @@ import '../../data/models/budget.dart';
 import '../../data/models/category.dart';
 import '../../providers/finance_provider.dart';
 
+/// Bütçe Yönetimi ve Dağılımı Ekranı.
+/// 50/30/20 kuralı (İhtiyaç %50, İstek %30, Tasarruf %20) ile
+/// Zarf / Kategori Bütçeleme yöntemlerini sunar, harcama limitleri ve aşım durumlarını gösterir.
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
 

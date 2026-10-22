@@ -9,6 +9,9 @@ import '../../data/models/transaction.dart';
 import '../../providers/finance_provider.dart';
 import 'transaction_form_screen.dart';
 
+/// İşlem detaylarının görüntülendiği, düzenlendiği veya silindiği ayrıntı ekranı.
+/// Özel gizli tutarları yerel olarak açıp kapatma (toggle), kategori, fiş notu,
+/// oluşturulma tarihi ve silme onay diyaloğu sunar.
 class TransactionDetailScreen extends StatefulWidget {
   final Transaction transaction;
 

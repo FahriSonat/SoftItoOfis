@@ -1,24 +1,25 @@
 import 'budget.dart';
 
+/// Kullanıcı tercihleri, bütçe limitleri ve bildirim ayarlarını temsil eden model sınıfı.
 class UserSettings {
-  final int salaryDay; // 1 - 31 (e.g. 15)
-  final int dailyLimitMinor;
-  final int weeklyLimitMinor;
-  final int monthlyLimitMinor;
-  final double alertThreshold; // 0.80 = 80%
-  final BudgetMethod budgetMethod;
-  final bool censorHiddenInExport;
-  final String currency;
-  final bool notifyOnSalary;
-  final bool notifyUpcomingBills;
-  final bool notifyDueDebts;
+  final int salaryDay; // Ayın maaş günü (1 - 31, varsayılan: 15)
+  final int dailyLimitMinor; // Günlük bütçe harcama limiti (kuruş)
+  final int weeklyLimitMinor; // Haftalık bütçe harcama limiti (kuruş)
+  final int monthlyLimitMinor; // Aylık genel bütçe harcama limiti (kuruş)
+  final double alertThreshold; // Bütçe aşım öncesi uyarı yüzdesi (0.80 = %80)
+  final BudgetMethod budgetMethod; // Tercih edilen bütçeleme yöntemi (50/30/20 veya Zarf)
+  final bool censorHiddenInExport; // Excel çıktısında gizli tutarlar sansürlensin mi
+  final String currency; // Varsayılan para birimi simgesi/kodu
+  final bool notifyOnSalary; // Maaş günü ve sonraki 3 gün hatırlatması açık mı
+  final bool notifyUpcomingBills; // Yaklaşan fatura bildirimleri açık mı
+  final bool notifyDueDebts; // Yaklaşan borç vadesi bildirimleri açık mı
 
   UserSettings({
     this.salaryDay = 15,
     this.dailyLimitMinor = 150000,    // 1.500,00 ₺
     this.weeklyLimitMinor = 800000,   // 8.000,00 ₺
     this.monthlyLimitMinor = 3500000, // 35.000,00 ₺
-    this.alertThreshold = 0.80,
+    this.alertThreshold = 0.80,       // %80 harcama uyarısı
     this.budgetMethod = BudgetMethod.rule503020,
     this.censorHiddenInExport = true,
     this.currency = 'TRY',

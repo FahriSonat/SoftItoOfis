@@ -9,15 +9,21 @@ import '../data/services/finance_repository.dart';
 import '../data/services/notification_service.dart';
 import '../core/utils/date_formatter.dart';
 
+/// Finans verilerini ve iş kurallarını yöneten ana durum yönetim sınıfı (State Management).
+/// İşlemler, bütçeler, borçlar, düzenli ödemeler ve kullanıcı ayarlarını tutar,
+/// hesaplamaları önbelleğe alarak yüksek performanslı (O(1)) erişim sunar.
 class FinanceProvider with ChangeNotifier {
   final FinanceRepository _repository;
 
+  /// FinanceProvider kurucusu (isteğe bağlı repository enjeksiyonu yapılabilir)
   FinanceProvider({FinanceRepository? repository})
       : _repository = repository ?? FinanceRepository();
 
+  // Yükleme durumu göstergesi
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
+  // Ana veri listeleri
   List<Transaction> _transactions = [];
   List<Category> _categories = [];
   List<Budget> _budgets = [];
@@ -26,17 +32,18 @@ class FinanceProvider with ChangeNotifier {
   UserSettings _settings = UserSettings();
   final Set<String> _dismissedNotificationIds = {};
 
+  // Seçili ay ve gizlilik oturum durumu
   DateTime _selectedMonth = DateTime.now();
   bool _revealHiddenAmountsInSession = false;
 
-  // Cached aggregates for high performance (O(1) access)
+  // Yüksek performans için önbelleklenmiş aylık toplamlar (O(1) erişim)
   List<Transaction> _selectedMonthTransactions = [];
   int _selectedMonthIncomeMinor = 0;
   int _selectedMonthExpenseMinor = 0;
   int _selectedMonthCharityMinor = 0;
   Map<String, Category> _categoryMap = {};
 
-  // Getters
+  // Dışarıya açılan salt-okunur (unmodifiable) getter'lar
   List<Transaction> get transactions => List.unmodifiable(_transactions);
   List<Category> get categories => List.unmodifiable(_categories);
   List<Budget> get budgets => List.unmodifiable(_budgets);
@@ -48,10 +55,12 @@ class FinanceProvider with ChangeNotifier {
 
   Map<String, Category> get categoryMap => _categoryMap;
 
+  /// Kategorileri ID'ye göre hızlı erişim için haritaya (Map) dönüştürür
   void _recomputeCategoryMap() {
     _categoryMap = {for (var c in _categories) c.id: c};
   }
 
+  /// Seçili ay için işlem listesini ve gelir/gider/hayır işi toplamlarını yeniden hesaplar
   void _recomputeMonthlyAggregates() {
     final filtered = <Transaction>[];
     int income = 0;
@@ -73,6 +82,7 @@ class FinanceProvider with ChangeNotifier {
       }
     }
 
+    // Tarihe göre yeniden eskiye doğru sıralama
     filtered.sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
 
     _selectedMonthTransactions = filtered;
@@ -81,17 +91,20 @@ class FinanceProvider with ChangeNotifier {
     _selectedMonthCharityMinor = charity;
   }
 
+  /// Mevcut oturumda gizli tutarların görünürlüğünü açıp kapatır
   void toggleRevealHiddenAmounts() {
     _revealHiddenAmountsInSession = !_revealHiddenAmountsInSession;
     notifyListeners();
   }
 
+  /// Filtrelenen ayı günceller ve ilgili ayın toplamlarını yeniden hesaplar
   void setSelectedMonth(DateTime month) {
     _selectedMonth = DateTime(month.year, month.month, 1);
     _recomputeMonthlyAggregates();
     notifyListeners();
   }
 
+  /// Uygulama ilk açıldığında verileri asenkron olarak depolarından yükler
   Future<void> init() async {
     _isLoading = true;
     notifyListeners();
@@ -113,16 +126,22 @@ class FinanceProvider with ChangeNotifier {
     }
   }
 
-  // --- Calculations for selected month (Cached O(1) Reads) ---
+  // --- Seçili Ay Hesaplamaları (Önbellekten Hızlı Okuma) ---
 
+  /// Seçili ayın filtreli işlem listesi
   List<Transaction> get selectedMonthTransactions => _selectedMonthTransactions;
+  /// Seçili ayın toplam geliri (kuruş cinsinden)
   int get selectedMonthIncomeMinor => _selectedMonthIncomeMinor;
+  /// Seçili ayın toplam gideri (kuruş cinsinden)
   int get selectedMonthExpenseMinor => _selectedMonthExpenseMinor;
+  /// Seçili ayın net bakiyesi (Gelir - Gider)
   int get selectedMonthNetBalanceMinor => _selectedMonthIncomeMinor - _selectedMonthExpenseMinor;
+  /// Seçili ayın hayır işi / sadaka giderleri toplamı
   int get selectedMonthCharityMinor => _selectedMonthCharityMinor;
 
-  // --- Today and Week Expenses ---
+  // --- Bugün ve Bu Hafta Harcamaları ---
 
+  /// Bugün yapılan toplam gider (kuruş cinsinden)
   int get todayExpenseMinor {
     final now = DateTime.now();
     int total = 0;
@@ -137,6 +156,7 @@ class FinanceProvider with ChangeNotifier {
     return total;
   }
 
+  /// Mevcut takvim haftasındaki toplam gider (Pazartesi'den bugüne)
   int get currentWeekExpenseMinor {
     final now = DateTime.now();
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
@@ -152,7 +172,7 @@ class FinanceProvider with ChangeNotifier {
   }
 
   /// Kalan günlük harcanabilir para hesabı (Tahmin)
-  /// Remaining monthly budget / days remaining in current month
+  /// Formül: (Aylık Bütçe Limiti - Bu Ayki Harcama) / Ayın Kalan Gün Sayısı
   int get dailySpendableMinor {
     final now = DateTime.now();
     final remainingDays = DateFormatter.daysRemainingInMonth(now);
@@ -165,8 +185,9 @@ class FinanceProvider with ChangeNotifier {
     return (remainingBudget / remainingDays).round();
   }
 
-  // --- Notifications ---
+  // --- Bildirimler ve Hatırlatmalar ---
 
+  /// Aktif uygulama içi uyarıları ve yaklaşan fatura/borç bildirimlerini döndürür
   List<AppNotification> get notifications {
     final all = NotificationService.evaluateNotifications(
       monthlyExpenseMinor: selectedMonthExpenseMinor,
@@ -178,16 +199,19 @@ class FinanceProvider with ChangeNotifier {
       settings: _settings,
     );
 
+    // Kullanıcının kapattığı (dismiss ettiği) bildirimleri filtreler
     return all.where((n) => !_dismissedNotificationIds.contains(n.id)).toList();
   }
 
+  /// Bir bildirimi kullanıcı kapattığında gizler
   void dismissNotification(String id) {
     _dismissedNotificationIds.add(id);
     notifyListeners();
   }
 
-  // --- Transaction Actions ---
+  // --- İşlem (Gelir/Gider) Eylemleri ---
 
+  /// Yeni bir işlem ekler, aylık toplamları günceller ve depolar
   Future<void> addTransaction(Transaction tx) async {
     _transactions.insert(0, tx);
     _recomputeMonthlyAggregates();
@@ -195,6 +219,7 @@ class FinanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Mevcut bir işlemi günceller
   Future<void> updateTransaction(Transaction tx) async {
     final index = _transactions.indexWhere((t) => t.id == tx.id);
     if (index != -1) {
@@ -205,6 +230,7 @@ class FinanceProvider with ChangeNotifier {
     }
   }
 
+  /// Belirtilen ID'ye sahip işlemi siler
   Future<void> deleteTransaction(String id) async {
     _transactions.removeWhere((t) => t.id == id);
     _recomputeMonthlyAggregates();
@@ -212,14 +238,16 @@ class FinanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // --- Debts & Realized Cash Flow ---
+  // --- Borçlar ve Gerçekleşen Nakit Akışı ---
 
+  /// Yeni bir borç kaydı ekler
   Future<void> addDebt(Debt debt) async {
     _debts.add(debt);
     await _repository.saveDebts(_debts);
     notifyListeners();
   }
 
+  /// Borç kaydını günceller
   Future<void> updateDebt(Debt debt) async {
     final index = _debts.indexWhere((d) => d.id == debt.id);
     if (index != -1) {
@@ -229,19 +257,23 @@ class FinanceProvider with ChangeNotifier {
     }
   }
 
+  /// Borç kaydını siler
   Future<void> deleteDebt(String id) async {
     _debts.removeWhere((d) => d.id == id);
     await _repository.saveDebts(_debts);
     notifyListeners();
   }
 
-  /// Records partial or full repayment for a debt
-  /// Prevents double counting by creating corresponding transaction
+  /// Borç için kısmi veya tam geri ödeme kaydeder.
+  /// Çift sayımı önler ve gerçek nakit akışı işlemi (Gelir veya Gider) oluşturur:
+  /// - Verilen borç tahsilatı -> Gelir işlemi
+  /// - Alınan borç ödemesi -> Gider işlemi
   Future<void> recordDebtRepayment({
     required Debt debt,
     required int paymentAmountMinor,
     String? note,
   }) async {
+    // Kalan borç tutarı hesaplanır (asla sıfırın altına inmez)
     final newRemaining = (debt.remainingMinor - paymentAmountMinor).clamp(0, debt.principalMinor);
     final isSettled = newRemaining == 0;
 
@@ -253,10 +285,10 @@ class FinanceProvider with ChangeNotifier {
 
     await updateDebt(updatedDebt);
 
-    // Create corresponding cash flow transaction
+    // İlgili nakit akışı işlemi otomatik olarak oluşturulur
     final now = DateTime.now();
     if (debt.isLent) {
-      // Verilen borcun geri tahsilatı = Gelir
+      // Verilen borcun geri tahsilatı = Gelir işlemi
       final tx = Transaction(
         id: 'tx-debt-repay-${DateTime.now().millisecondsSinceEpoch}',
         type: TransactionType.income,
@@ -268,7 +300,7 @@ class FinanceProvider with ChangeNotifier {
       );
       await addTransaction(tx);
     } else {
-      // Alınan borcun geri ödenmesi = Gider
+      // Alınan borcun geri ödenmesi = Gider işlemi
       final tx = Transaction(
         id: 'tx-debt-pay-${DateTime.now().millisecondsSinceEpoch}',
         type: TransactionType.expense,
@@ -282,14 +314,16 @@ class FinanceProvider with ChangeNotifier {
     }
   }
 
-  // --- Recurring Payments (Bills) ---
+  // --- Düzenli Ödemeler ve Faturalar ---
 
+  /// Yeni bir düzenli ödeme / fatura ekler
   Future<void> addRecurringPayment(RecurringPayment item) async {
     _recurringPayments.add(item);
     await _repository.saveRecurringPayments(_recurringPayments);
     notifyListeners();
   }
 
+  /// Düzenli ödemeyi günceller
   Future<void> updateRecurringPayment(RecurringPayment item) async {
     final index = _recurringPayments.indexWhere((r) => r.id == item.id);
     if (index != -1) {
@@ -299,14 +333,15 @@ class FinanceProvider with ChangeNotifier {
     }
   }
 
+  /// Düzenli ödemeyi siler
   Future<void> deleteRecurringPayment(String id) async {
     _recurringPayments.removeWhere((r) => r.id == id);
     await _repository.saveRecurringPayments(_recurringPayments);
     notifyListeners();
   }
 
-  /// Fatura ödendi olarak işaretlenir ve tek seferlik gerçekleşmiş gider kaydı oluşturulur
-  /// Çift sayım önlenir
+  /// Fatura ödendi olarak işaretlenir ve tek seferlik gerçekleşmiş gider kaydı oluşturulur.
+  /// Böylece planlanan fatura gerçekleşen harcamaya dönüştürülür ve çift sayım önlenir.
   Future<void> markRecurringAsPaid({
     required RecurringPayment item,
     int? actualAmountMinor,
@@ -314,7 +349,7 @@ class FinanceProvider with ChangeNotifier {
     final amount = actualAmountMinor ?? item.expectedAmountMinor ?? 0;
     if (amount <= 0) return;
 
-    // 1. Gider kaydı oluştur
+    // 1. Gerçekleşen harcama için gider kaydı oluştur
     final tx = Transaction(
       id: 'tx-bill-${DateTime.now().millisecondsSinceEpoch}',
       type: TransactionType.expense,
@@ -343,14 +378,16 @@ class FinanceProvider with ChangeNotifier {
     await updateRecurringPayment(updatedItem);
   }
 
-  // --- Budgets & Settings ---
+  // --- Bütçeler ve Ayarlar ---
 
+  /// Kullanıcı ayarlarını günceller ve kaydeder
   Future<void> updateSettings(UserSettings settings) async {
     _settings = settings;
     await _repository.saveSettings(_settings);
     notifyListeners();
   }
 
+  /// Bütçe tanımını ekler veya günceller
   Future<void> saveBudget(Budget budget) async {
     final index = _budgets.indexWhere((b) => b.id == budget.id);
     if (index != -1) {
@@ -362,7 +399,10 @@ class FinanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // 50/30/20 rule calculation
+  /// 50/30/20 bütçe kuralına göre harcama dağılımını hesaplar:
+  /// - Needs (%50 Zorunlu İhtiyaçlar)
+  /// - Wants (%30 İstekler & Yaşam)
+  /// - Savings (%20 Tasarruf & Borç)
   Map<Rule503020Type, int> calculate503020Spending() {
     int needs = 0;
     int wants = 0;
@@ -377,7 +417,7 @@ class FinanceProvider with ChangeNotifier {
       } else if (category?.rule503020Type == Rule503020Type.savings) {
         savings += tx.amountMinor;
       } else {
-        // Default to needs if unspecified
+        // Belirtilmemişse varsayılan olarak temel ihtiyaç kabul edilir
         needs += tx.amountMinor;
       }
     }
@@ -389,7 +429,7 @@ class FinanceProvider with ChangeNotifier {
     };
   }
 
-  // Spending per category in selected month
+  /// Seçili ayda kategori bazlı harcama toplamlarını hesaplar
   Map<String, int> calculateCategorySpending() {
     final Map<String, int> map = {};
     for (final tx in selectedMonthTransactions.where((t) => t.isExpense)) {

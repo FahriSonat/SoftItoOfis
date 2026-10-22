@@ -12,8 +12,14 @@ import 'screens/reports/reports_screen.dart';
 import 'screens/simulation/simulation_screen.dart';
 import 'screens/settings/settings_screen.dart';
 
+/// Uygulamanın başlangıç noktası (Entry Point).
+/// Flutter bağlamını başlatır, sistem çubuğu (status bar ve navigation bar)
+/// renklerini ayarlar ve ana uygulamayı ayağa kaldırır.
 void main() {
+  // Flutter widget ağacının başlatıldığından emin olunur
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Durum çubuğu (status bar) ve gezinme çubuğu (navigation bar) için tema ayarları
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -23,27 +29,35 @@ void main() {
     ),
   );
 
+  // Kök widget çalıştırılır
   runApp(const PersonalFinanceApp());
 }
 
+/// Uygulamanın kök widget'ı (Root Widget).
+/// Durum yönetimini (FinanceProvider) sağlar ve küresel temayı uygular.
 class PersonalFinanceApp extends StatelessWidget {
+  /// Test veya özel durumlar için isteğe bağlı olarak dışarıdan provider enjekte edilebilir.
   final FinanceProvider? provider;
   const PersonalFinanceApp({super.key, this.provider});
 
   @override
   Widget build(BuildContext context) {
+    // Uygulama genelinde erişilebilir olan finans sağlayıcısını (Provider) tanımlıyoruz
     return ChangeNotifierProvider(
       create: (_) => provider ?? (FinanceProvider()..init()),
       child: MaterialApp(
         title: 'Para Takip',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
+        // Ana navigasyon kabuğu (Bottom Bar ve Drawer içeren ekran)
         home: const MainNavigationShell(),
       ),
     );
   }
 }
 
+/// Ana navigasyon kabuğu.
+/// Alt navigasyon çubuğu (BottomNavigationBar) ve yan menüyü (Drawer) yönetir.
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
 
@@ -52,8 +66,10 @@ class MainNavigationShell extends StatefulWidget {
 }
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
+  // Seçili olan aktif sekmenin indeksi (0: Özet, 1: İşlemler, vb.)
   int _currentIndex = 0;
 
+  /// İstenen sekmeye geçiş yapan yardımcı metot
   void _navigateToTab(int index) {
     setState(() {
       _currentIndex = index;
@@ -62,20 +78,24 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
+    // Alt gezinme çubuğunda gösterilecek ana ekran listesi
     final List<Widget> screens = [
-      HomeDashboardScreen(onNavigateTab: _navigateToTab),
-      const TransactionsListScreen(),
-      const BudgetScreen(),
-      const DebtsBillsScreen(),
-      const ReportsScreen(),
+      HomeDashboardScreen(onNavigateTab: _navigateToTab), // Bütçe Özeti / Dashboard
+      const TransactionsListScreen(),                     // İşlem Geçmişi & Detayları
+      const BudgetScreen(),                               // Kategori & Zarf Bütçeleri
+      const DebtsBillsScreen(),                           // Borçlar ve Düzenli Faturalar
+      const ReportsScreen(),                              // Harcama Raporları & Excel Çıktısı
     ];
 
     return Scaffold(
+      // Yan çekmece menüsü (Drawer)
       drawer: _buildDrawer(context),
+      // IndexedStack: Sekmeler arası geçişlerde ekran durumunun (scroll, form vb.) korunmasını sağlar
       body: IndexedStack(
         index: _currentIndex,
         children: screens,
       ),
+      // Alt gezinme çubuğu
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _navigateToTab,
@@ -110,6 +130,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     );
   }
 
+  /// Yan çekmece menüsünü (Drawer) oluşturan metot.
+  /// Kullanıcının ana sekmelere ve ek sayfalara (Simülasyon, Ayarlar) erişmesini sağlar.
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       backgroundColor: AppColors.surface,

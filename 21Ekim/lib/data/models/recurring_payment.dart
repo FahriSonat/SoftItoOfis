@@ -1,14 +1,16 @@
+/// Düzenli ödeme tekrarlanma sıklığı (Günlük, Haftalık, Aylık)
 enum RecurringCadence { daily, weekly, monthly }
 
+/// Düzenli fatura, kira veya abonelik gibi tekrarlayan ödemelerin veri modeli.
 class RecurringPayment {
   final String id;
-  final String title;
-  final int? expectedAmountMinor;
-  final String currency;
-  final RecurringCadence cadence;
-  final DateTime dueDate;
-  final String? categoryId;
-  final bool isPaidThisPeriod;
+  final String title;               // Fatura/Ödeme başlığı (örn. 'Ev Kirası', 'Elektrik')
+  final int? expectedAmountMinor;   // Tahmini beklenen tutar (kuruş), null ise değişken fatura
+  final String currency;            // Para birimi (TRY vb.)
+  final RecurringCadence cadence;   // Tekrar sıklığı
+  final DateTime dueDate;           // Bu dönemki son ödeme / vade tarihi
+  final String? categoryId;         // İlişkili gider kategorisi
+  final bool isPaidThisPeriod;      // Bu dönem ödendi mi?
 
   RecurringPayment({
     required this.id,

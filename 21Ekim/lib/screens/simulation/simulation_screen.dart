@@ -7,6 +7,9 @@ import '../../core/widgets/app_banner.dart';
 import '../../data/services/notification_service.dart';
 import '../../providers/finance_provider.dart';
 
+/// Gelecek Ay Finansal Simülasyonu ve Dönem Projeksiyonu Ekranı.
+/// Beklenen maaş, ek gelir, düzenli faturalar ve borç taksitlerine dayalı olarak
+/// gelecek ayki net tasarruf ve tahmini varlık senaryolarını (Döviz / Altın eşdeğeri) simüle eder.
 class SimulationScreen extends StatefulWidget {
   const SimulationScreen({super.key});
 

@@ -10,9 +10,17 @@ import '../../data/models/recurring_payment.dart';
 import 'currency_formatter.dart';
 import 'date_formatter.dart';
 
+/// Finansal verileri, işlem dökümlerini ve bütçe analizlerini çok sayfalı (multi-sheet)
+/// profesyonel Excel (.xlsx) raporuna dönüştüren dışa aktarma servisi.
+/// 
+/// Kurallar gereği:
+/// - Gelir ve gider yanında ok işaretleri kullanılmaz (açık metin kullanılır).
+/// - Özel gizli tutarlar kullanıcının tercihine göre sansürlenir (₺••••).
+/// - Kuruş tam sayıları (minor units) ondalık Lira değerlerine çevrilerek yazılır.
 class ExcelExporter {
   ExcelExporter._();
 
+  /// Seçili ay ve filtreler için kapsamlı Excel raporu oluşturur ve cihazdaki dosya yolunu döndürür.
   static Future<String> exportReport({
     required List<Transaction> transactions,
     required List<Category> categories,
@@ -22,11 +30,13 @@ class ExcelExporter {
     required bool censorHiddenAmounts,
     required DateTime selectedDate,
   }) async {
+    // Yeni bir Excel çalışma kitabı oluşturulur
     final excel = Excel.createExcel();
 
+    // Hızlı kategori adı eşlemesi için harita
     final categoryMap = {for (var c in categories) c.id: c.name};
 
-    // Filter transactions for the selected month
+    // Seçili aya ait işlemleri filtrele ve tarihe göre artan sırala
     final monthTxs = transactions.where((tx) =>
       tx.occurredAt.year == selectedDate.year &&
       tx.occurredAt.month == selectedDate.month

@@ -3,12 +3,14 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/widgets/app_card.dart';
 
+/// Ana ekranda kullanıcının dönem net bakiyesini (Gelir - Gider)
+/// ve gizlilik (göz ikonuyla sansürleme) seçeneğini sunan kart bileşeni.
 class BalanceCard extends StatelessWidget {
-  final int netBalanceMinor;
-  final int incomeMinor;
-  final int expenseMinor;
-  final bool isHidden;
-  final VoidCallback onToggleHidden;
+  final int netBalanceMinor; // Net bakiye (kuruş)
+  final int incomeMinor;     // Toplam gelir (kuruş)
+  final int expenseMinor;    // Toplam gider (kuruş)
+  final bool isHidden;       // Tutarlar sansürlensin mi?
+  final VoidCallback onToggleHidden; // Gizlilik durumunu değiştiren fonksiyon
 
   const BalanceCard({
     super.key,

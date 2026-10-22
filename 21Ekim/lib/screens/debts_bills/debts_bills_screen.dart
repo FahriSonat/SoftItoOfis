@@ -10,6 +10,10 @@ import '../../data/models/debt.dart';
 import '../../data/models/recurring_payment.dart';
 import '../../providers/finance_provider.dart';
 
+/// Borçlar ve Düzenli Faturalar Yönetim Ekranı.
+/// İki ana sekmeden oluşur:
+/// 1. Borç Takibi: Alınan ve verilen borçlar, kısmi geri ödemeler ve nakit akışı işlemleri.
+/// 2. Düzenli Faturalar: Kira, abonelikler, faturalar ve gerçekleşen ödeme işaretleme.
 class DebtsBillsScreen extends StatefulWidget {
   const DebtsBillsScreen({super.key});
 

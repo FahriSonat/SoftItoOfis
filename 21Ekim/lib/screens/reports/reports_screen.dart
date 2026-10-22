@@ -9,6 +9,9 @@ import '../../core/widgets/app_banner.dart';
 import '../../data/services/notification_service.dart';
 import '../../providers/finance_provider.dart';
 
+/// Harcama ve Finans Raporları Ekranı.
+/// Dönem gelir/gider grafik ve dökümleri, kategori bazlı pasta dağılımı,
+/// hayır işi ayrımı ve Excel (.xlsx) dışa aktarma işlevlerini sunar.
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 

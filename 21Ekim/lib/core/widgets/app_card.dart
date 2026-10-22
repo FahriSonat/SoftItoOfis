@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
+/// Uygulama genelinde tutarlı görünüm sağlayan kart bileşeni.
+/// Koyu tema yüzey rengi (AppColors.surface), yuvarlatılmış köşeler ve ince kenarlık içerir.
+/// İsteğe bağlı olarak tıklanabilir (InkWell) hale getirilebilir.
 class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;

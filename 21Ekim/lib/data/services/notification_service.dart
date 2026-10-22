@@ -5,14 +5,22 @@ import '../models/user_settings.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../core/utils/date_formatter.dart';
 
-enum AppNotificationType { info, warning, critical, success }
+/// Bildirim önem seviyesi ve türü
+enum AppNotificationType {
+  info,      // Bilgilendirme
+  warning,   // Uyarı / Eşik yaklaşımı
+  critical,  // Kritik / Bütçe aşımı veya vadesi gelen borç
+  success    // Başarılı işlem / Rapor hazır bildirimi
+}
 
+/// Uygulama içi bildirim ve hatırlatma modeli.
+/// Bildirim izni kapalı olsa bile uygulama içinde gösterilen bildirim nesnesidir.
 class AppNotification {
   final String id;
   final String title;
   final String message;
   final AppNotificationType type;
-  final String targetScreen;
+  final String targetScreen; // Tıklandığında yönlendirilecek ekran (örn. 'budget', 'debts', 'recurring')
   final DateTime date;
   bool isRead;
 
@@ -27,10 +35,12 @@ class AppNotification {
   });
 }
 
+/// Finansal kurallara göre uygulama içi bildirim ve hatırlatmaları üreten servis.
 class NotificationService {
   NotificationService._();
 
-  /// Evaluates and generates all in-app notifications and reminders
+  /// Kullanıcının mevcut finansal durumunu (bütçe, faturalar, borçlar, maaş günü vb.)
+  /// değerlendirerek dinamik uygulama içi bildirim listesi üretir.
   static List<AppNotification> evaluateNotifications({
     required int monthlyExpenseMinor,
     required int monthlyLimitMinor,
