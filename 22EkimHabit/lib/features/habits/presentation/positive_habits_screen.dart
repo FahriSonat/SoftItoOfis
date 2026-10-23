@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/widgets/empty_state_view.dart';
@@ -44,7 +45,10 @@ class PositiveHabitsScreen extends ConsumerWidget {
           }
 
           return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
             children: [
               const Text(
                 'Küçük adımlar tekrarlandığında güçlenir.',
@@ -70,13 +74,18 @@ class _PositiveHabitItem extends ConsumerWidget {
     final detailAsync = ref.watch(habitDetailProvider(habit.id));
 
     return detailAsync.when(
-      loading: () => const SizedBox(height: 90, child: Center(child: CircularProgressIndicator())),
-      error: (_, __) => const SizedBox(),
+      loading: () => const SizedBox(
+        height: 90,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, _) => const SizedBox(),
       data: (detail) {
         if (detail == null) return const SizedBox();
 
         String quickLabel = 'Tamamla';
-        VoidCallback quickAction = () => ref.read(habitsListProvider.notifier).addEntry(
+        VoidCallback quickAction = () => ref
+            .read(habitsListProvider.notifier)
+            .addEntry(
               habitId: habit.id,
               value: habit.targetValue,
               note: 'Bugün tamamlandı',
@@ -84,14 +93,18 @@ class _PositiveHabitItem extends ConsumerWidget {
 
         if (habit.category == HabitCategory.water) {
           quickLabel = '+250 ml';
-          quickAction = () => ref.read(habitsListProvider.notifier).addEntry(
+          quickAction = () => ref
+              .read(habitsListProvider.notifier)
+              .addEntry(
                 habitId: habit.id,
                 value: 250.0,
                 note: '250 ml su içildi',
               );
         } else if (habit.category == HabitCategory.reading) {
           quickLabel = '+10 Sayfa';
-          quickAction = () => ref.read(habitsListProvider.notifier).addEntry(
+          quickAction = () => ref
+              .read(habitsListProvider.notifier)
+              .addEntry(
                 habitId: habit.id,
                 value: 10.0,
                 note: '10 sayfa kitap okundu',
