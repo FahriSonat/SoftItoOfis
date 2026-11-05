@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:image_picker/image_picker.dart';
 
 class StorageServisi {
@@ -37,5 +36,6 @@ class StorageServisi {
 
   Future<void> dosyaSil(String dosyaYolu) async {
     final Reference ref = _storage.ref().child(dosyaYolu);
+    await ref.delete();
   }
 }
